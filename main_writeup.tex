@@ -1,0 +1,130 @@
+\documentclass[a4paper]{report}
+\usepackage{titlesec}
+\usepackage[margin=1.2in]{geometry}
+\usepackage[backend=biber, style=authoryear, maxnames=999, maxcitenames=3, firstinits=true, urldate=long]{biblatex}
+
+\addbibresource{citation.bib}
+
+% start uwe referencing styling
+\DeclareNameAlias{sortname}{last-first}
+\DeclareFieldFormat{edition}{%
+  \ifinteger{#1}
+    {\ifnumequal{#1}{1}%
+     {}%
+     {\mkbibordedition{#1}~\bibstring{edition}}%
+    }
+    {#1\isdot}}
+
+\DeclareFieldFormat[article,inbook,incollection]{title}{#1\isdot}
+\DeclareFieldFormat[article,inbook,incollection]{citetitle}{#1\isdot}
+
+\newrobustcmd{\MakeTitleCase}[1]{%
+  \ifboolexpr{test {\ifentrytype{article}} or test {\ifentrytype{inbook}} or test {\ifentrytype{incollection}}}
+    {#1}
+    {\MakeSentenceCase{#1}}}
+
+\DeclareFieldFormat{urldate}{\bibsentence\mkbibbrackets{\bibstring{urlseen}\space#1}}
+\DeclareFieldFormat{url}{\bibstring{urlfrom}\addcolon\space\url{#1}}
+
+\renewbibmacro*{journal}{%
+  \iffieldundef{journaltitle}
+    {}
+    {\printtext[journaltitle]{%
+       \printfield[titlecase]{journaltitle}%
+       \setunit{\subtitlepunct}%
+       \printfield[titlecase]{journalsubtitle}}
+       \ifboolexpr{
+         not test {\iffieldundef{url}}
+         or
+         not test {\iffieldundef{urldate}}
+         or
+         not test {\iffieldundef{doi}}
+         or
+         not test {\iffieldundef{eprint}}
+       }
+         {\nopunct\bibstring[\mkbibbrackets]{online}}%
+         {}}}
+
+\newbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addspace}%
+  \iffieldundef{series}
+    {}
+    {\newunit
+     \printfield{series}%
+     \setunit{\addspace}}%
+  \newunit
+  \usebibmacro{volume+number+eid}%
+  \setunit{\addspace}%
+  \usebibmacro{issue+date}%
+  \setunit{\addcolon\space}%
+  \usebibmacro{issue}%
+  \newunit}
+
+\NewBibliographyString{online}
+\DefineBibliographyStrings{english}{%
+  urlseen    = {accessed},
+  online     = {online},
+}
+% end uwe referencing styling
+
+
+\titleformat{\chapter}{\normalfont\huge}{\thechapter.}{20pt}{\huge\it}
+
+\begin{document}
+
+\title{Embedded Systems Design - Mobile Robot Research Platform}
+\author{Ben Silvester}
+\date{2022}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\chapter{Task Brief}
+The task involves creating an autonomous robot that follows a black line course on a white background. There are three tracks to complete:
+
+\begin{enumerate}
+	\item Simple loop track with left and right turns
+	\item Figure of 8 track
+	\item Crossings, tight corners and close parallel tracks
+\end{enumerate}
+
+Full marks only require the first. The final two are for competition purposes only, and involve a race focusing on the fastest successful completion of the tracks.
+
+\hfill \break
+The following is the basic function we must achieve:
+
+\hfill \break
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        Build an embedded controller that can navigate a predefined path on the floor marked as a black line on a white background.
+    }%
+}
+\hfill \break
+
+The following are the advanced functions desired:
+
+\begin{itemize}
+	\item Show visual indication of the robot's movements
+	\item Show visual indication of the robot's speed
+	\item Illuminate the track in darkness
+	\item White lights on the front when powered
+	\item Red brake lights on the rear for stopping or when not moving
+	\item White lights on rear for reversing
+	\item Yellow flashing indicators when cornering
+\end{itemize}
+
+\chapter{Approach}
+The following section is split into various subsections after decomposing the problem.
+
+\section{Line Sensing}
+We are required to detect a black line on a white background. The width of the line is not known. There will also be a figure of 8 line, and crossings, tight corners and close parallel tracks. This section involves identifying possible methods for detecting the line, and differentiating the different junctions.
+
+\subsection{IR Detector}
+An IR (infra-red) LED and photodiode combination may be used to distinguish between black and white lines (\cite{adafruit}).
+
+\printbibliography
+
+\end{document}
